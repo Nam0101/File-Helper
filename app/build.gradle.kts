@@ -52,5 +52,4 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation(libs.koin.android)
-
 }

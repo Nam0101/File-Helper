@@ -2,6 +2,7 @@ package nv.nam.filehelper.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import nv.nam.filehelper.domain.models.FileModel
+import nv.nam.filehelper.domain.models.FileType
 
 /**
  * @author Nam Nguyen Van
@@ -12,6 +13,6 @@ import nv.nam.filehelper.domain.models.FileModel
  * at domain layer in clean architecture
  */
 interface FileRepository {
-    suspend fun getAllFiles(page: Int, pageSize: Int): Flow<List<FileModel>>
+    suspend fun getAllFiles(page: Int, pageSize: Int, fileType: FileType): Flow<List<FileModel>>
 
 }

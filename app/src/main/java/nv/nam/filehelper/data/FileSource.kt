@@ -2,6 +2,7 @@ package nv.nam.filehelper.data
 
 import kotlinx.coroutines.flow.Flow
 import nv.nam.filehelper.domain.models.FileModel
+import nv.nam.filehelper.domain.models.FileType
 
 /**
  * @author Nam Nguyen Van
@@ -11,9 +12,5 @@ import nv.nam.filehelper.domain.models.FileModel
  * @description :
  */
 interface FileSource {
-    suspend fun getAllFiles(page: Int, pageSize: Int): Flow<List<FileModel>>
-
-
-
-
+    suspend fun getAllFiles(page: Int, pageSize: Int, fileType: FileType): Flow<List<FileModel>>
 }

@@ -1,5 +1,6 @@
 package nv.nam.filehelper.domain.usecase
 
+import nv.nam.filehelper.domain.models.FileType
 import nv.nam.filehelper.domain.repository.FileRepository
 
 /**
@@ -12,5 +13,6 @@ import nv.nam.filehelper.domain.repository.FileRepository
 class GetFileUseCase(
     private val fileRepository: FileRepository
 ) {
-    suspend fun getAllFiles(page: Int, pageSize: Int) = fileRepository.getAllFiles(page, pageSize)
+    suspend fun getAllFiles(page: Int, pageSize: Int, fileType: FileType = FileType.ALL) =
+        fileRepository.getAllFiles(page, pageSize, fileType)
 }

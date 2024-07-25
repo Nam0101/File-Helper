@@ -1,7 +1,6 @@
 package nv.nam.filehelper
 
 import android.app.Application
-import nv.nam.filehelper.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
@@ -17,7 +16,6 @@ class FileApplication : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@FileApplication)
-            modules(appModule)
         }
     }
 }

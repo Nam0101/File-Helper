@@ -5,6 +5,7 @@ import nv.nam.filehelper.data.FileSource
 import nv.nam.filehelper.data.local.LocalFileStorage
 import nv.nam.filehelper.data.remote.RemoteFileStorage
 import nv.nam.filehelper.domain.models.FileModel
+import nv.nam.filehelper.domain.models.FileType
 import nv.nam.filehelper.domain.repository.FileRepository
 
 /**
@@ -17,7 +18,7 @@ import nv.nam.filehelper.domain.repository.FileRepository
 class FileRepositoryImpl(
     private val dataSource:FileSource
 ) : FileRepository {
-    override suspend fun getAllFiles(page: Int, pageSize: Int): Flow<List<FileModel>> {
-        return dataSource.getAllFiles(page, pageSize)
+    override suspend fun getAllFiles(page: Int, pageSize: Int, fileType: FileType): Flow<List<FileModel>> {
+        return dataSource.getAllFiles(page, pageSize, fileType)
     }
 }

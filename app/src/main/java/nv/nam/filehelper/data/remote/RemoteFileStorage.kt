@@ -3,6 +3,7 @@ package nv.nam.filehelper.data.remote
 import kotlinx.coroutines.flow.Flow
 import nv.nam.filehelper.data.FileSource
 import nv.nam.filehelper.domain.models.FileModel
+import nv.nam.filehelper.domain.models.FileType
 
 /**
  * @author Nam Nguyen Van
@@ -13,7 +14,9 @@ import nv.nam.filehelper.domain.models.FileModel
  */
 class RemoteFileStorage : FileSource {
     // TODO: THIS CLASS IS NOT IMPLEMENTED YET
-    override suspend fun getAllFiles(page: Int, pageSize: Int): Flow<List<FileModel>> {
+    override suspend fun getAllFiles(
+        page: Int, pageSize: Int, fileType: FileType
+    ): Flow<List<FileModel>> {
         TODO("Not yet implemented")
     }
 }
