@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+
 }
 
 android {
@@ -49,7 +50,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     //flow
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    //koin
+
     implementation(libs.koin.android)
 
 }

@@ -1,6 +1,5 @@
 [versions]
 agp = "8.5.1"
-filemanager = "1.0.0"
 koinAndroid = "3.6.0-wasm-alpha2"
 koinAndroidxViewmodel = "3.1.2"
 kotlin = "2.0.0"
@@ -18,7 +17,6 @@ constraintlayout = "2.1.4"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-filemanager = { module = "com.github.himanshurawat:filemanager", version.ref = "filemanager" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
