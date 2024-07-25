@@ -23,8 +23,8 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val btn: Button by lazy { findViewById(R.id.button) }
+    private val authBtn by lazy { findViewById<Button>(R.id.auth) }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -82,6 +82,10 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Default).launch {
             val file = fileManager.getAllPdfFiles(usePagination = false)
             Log.i("File", "File size: ${file.size}")
+            val searchedFile = fileManager.searchFileByName("Bachelor-Hedspi-program")
+            searchedFile.forEach {
+                Log.i("File", "File name: ${it.name}")
+            }
         }
     }
 }

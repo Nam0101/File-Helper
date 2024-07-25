@@ -13,10 +13,15 @@ import nv.nam.filehelper.domain.models.FileType
  * @description : This class is used to handle remote file storage operations but it is not implemented yet
  */
 class RemoteFileStorage : FileSource {
+
     // TODO: THIS CLASS IS NOT IMPLEMENTED YET
     override suspend fun getAllFiles(
         page: Int, pageSize: Int, fileType: FileType
     ): Flow<List<FileModel>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun searchFileByName(fileName: String): Flow<List<FileModel>> {
         TODO("Not yet implemented")
     }
 }

@@ -1,8 +1,6 @@
 package nv.nam.filehelper
 
 import android.app.Application
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.GlobalContext.startKoin
 
 /**
  * @author Nam Nguyen Van
@@ -12,10 +10,4 @@ import org.koin.core.context.GlobalContext.startKoin
  * @description : File Application
  */
 class FileApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        startKoin {
-            androidContext(this@FileApplication)
-        }
-    }
 }

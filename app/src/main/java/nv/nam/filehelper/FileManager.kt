@@ -1,6 +1,7 @@
 package nv.nam.filehelper
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import nv.nam.filehelper.data.FileSource
@@ -15,7 +16,7 @@ import nv.nam.filehelper.domain.usecase.GetFileUseCase
  * Project: File Helper
  * Created: 25/7/2024
  * Github: https://github.com/Nam0101
- * @description : File Manager
+ * @description
  * Provides functionalities to manage files including fetching files of various types and by extension.
  * Utilizes a use case pattern to interact with file storage, supporting both local and potentially remote storage.
  * @property getFileUseCase The use case responsible for fetching files.
@@ -25,6 +26,9 @@ class FileManager private constructor(
     private val getFileUseCase: GetFileUseCase,
     private val defaultPageSize: Int = 20,
 ) {
+
+    private val dispatcher = Dispatchers.IO
+
     /**
      * Builder class for [FileManager]. Allows for configuring file source and page size.
      */
@@ -157,6 +161,15 @@ class FileManager private constructor(
         return files.filter { it.name.endsWith(ext, true) }
     }
 
+    /**
+     * Searches for files by name.
+     *
+     * @param fileName The name of the file to search for.
+     * @return The list of files matching the search query.
+     */
+    suspend fun searchFileByName(fileName: String): List<FileModel> {
+        return getFileUseCase.searchFileByName(fileName).flowOn(dispatcher).first()
+    }
 
     private suspend fun getAllFiles(
         page: Int = 1,
@@ -165,9 +178,9 @@ class FileManager private constructor(
         fileType: FileType = FileType.ALL
     ): List<FileModel> {
         return if (usePagination) {
-            getFileUseCase.getAllFiles(page, pageSize, fileType).flowOn(Dispatchers.IO).first()
+            getFileUseCase.getAllFiles(page, pageSize, fileType).flowOn(dispatcher).first()
         } else {
-            getFileUseCase.getAllFiles(1, Int.MAX_VALUE, fileType).flowOn(Dispatchers.IO).first()
+            getFileUseCase.getAllFiles(1, Int.MAX_VALUE, fileType).flowOn(dispatcher).first()
         }
     }
 }

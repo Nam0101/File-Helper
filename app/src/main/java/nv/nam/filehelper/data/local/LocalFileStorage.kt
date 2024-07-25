@@ -36,7 +36,6 @@ class LocalFileStorage : FileSource {
         if (updateJob?.isActive == true) {
             updateJob?.join()
         }
-
         updateJob = Job()
         withContext(contextDispatcher) {
             cachedFiles = getFilesFromInternalStorage(fileType = fileType)
@@ -45,6 +44,12 @@ class LocalFileStorage : FileSource {
         emit(cachedFiles?.chunked(pageSize)?.getOrNull(page - 1) ?: emptyList())
     }
 
+    override suspend fun searchFileByName(fileName: String): Flow<List<FileModel>> = flow {
+        if (cachedFiles.isNullOrEmpty()) {
+            cachedFiles = getFilesFromInternalStorage()
+        }
+        emit(cachedFiles?.filter { it.name.contains(fileName, ignoreCase = true) } ?: emptyList())
+    }
 
     private fun getFilesFromInternalStorage(
         directoryPath: String = localStorageDirectory, fileType: FileType = FileType.ALL
@@ -62,4 +67,6 @@ class LocalFileStorage : FileSource {
             }
         }
     }.toList()
+
+
 }

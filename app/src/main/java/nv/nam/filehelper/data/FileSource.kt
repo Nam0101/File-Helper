@@ -13,4 +13,5 @@ import nv.nam.filehelper.domain.models.FileType
  */
 interface FileSource {
     suspend fun getAllFiles(page: Int, pageSize: Int, fileType: FileType): Flow<List<FileModel>>
+    suspend fun searchFileByName(fileName: String): Flow<List<FileModel>>
 }

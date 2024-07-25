@@ -51,5 +51,6 @@ dependencies {
     //flow
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation(libs.koin.android)
+    // google auth
+    implementation(libs.play.services.auth)
 }

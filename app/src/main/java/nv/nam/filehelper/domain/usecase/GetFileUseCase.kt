@@ -15,4 +15,6 @@ class GetFileUseCase(
 ) {
     suspend fun getAllFiles(page: Int, pageSize: Int, fileType: FileType = FileType.ALL) =
         fileRepository.getAllFiles(page, pageSize, fileType)
+
+    suspend fun searchFileByName(fileName: String) = fileRepository.searchFileByName(fileName)
 }
