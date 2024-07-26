@@ -33,12 +33,42 @@ The FileHelper SDK provides a simple and efficient way to manage and access file
      ```gradle
      implementation("androidx.room:room-runtime:2.5.2")
      implementation("androidx.room:room-ktx:2.5.2")
-     kapt("androidx.room:room-compiler:2.5.2")
+     ksp("androidx.room:room-compiler:2.5.2")
      ```
 
      - Replace version numbers with the latest versions if needed.
 
 ## Usage
+
+### Permissions
+
+The FileHelper SDK requires storage permission to access files on the device. 
+
+**Android 6.0 (API level 23) and above:**
+
+- Add the `READ_EXTERNAL_STORAGE` permission to your app's `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+```
+
+- Request the permission at runtime:
+
+```kotlin
+if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE_STORAGE_PERMISSION)
+}
+```
+
+**Android 11 (API level 30) and above:**
+
+- If your app needs access to all files on the device, you also need to request the `MANAGE_EXTERNAL_STORAGE` permission. This permission can only be granted through a system settings page. You can direct users to the settings page using an intent:
+
+```kotlin
+val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+intent.data = Uri.parse("package:" + context.packageName)
+startActivity(intent)
+```
 
 ### Initializing FileManager
 
@@ -62,6 +92,7 @@ single<FileManager> {
 ```
 
 ### Accessing Files
+The FileHelper SDK will throw a `SecurityException` if the necessary storage permissions are not granted. Make sure to request and handle permissions before calling any file access methods.
 
 ```kotlin
 // Get all files

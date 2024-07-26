@@ -86,17 +86,27 @@ class FileManager private constructor(
          * @param pageSize The number of files to fetch in a single page.
          * @return The Builder instance for chaining.
          */
-
         fun setDefaultPageSize(pageSize: Int): Builder {
             this.defaultPageSize = pageSize
             return this
         }
 
+        /**
+         * Sets the default page size to Int.MAX_VALUE, effectively disabling pagination.
+         *
+         * @return The Builder instance for chaining.
+         */
         fun setNotPageSize(): Builder {
             this.defaultPageSize = Int.MAX_VALUE
             return this
         }
 
+        /**
+         * Sets the context for the FileManager.
+         *
+         * @param context The context to use. Should be the application context (use Dagger Hilt or Koin for DI).
+         * @return The Builder instance for chaining.
+         */
         fun useContext(
             context: Context
         ): Builder {
@@ -122,12 +132,6 @@ class FileManager private constructor(
                 throw SecurityException("Context must be set to use this class")
             }
         }
-    }
-
-    private suspend fun getAllFiles(
-        page: Int = 1, pageSize: Int = defaultPageSize, fileType: FileType = FileType.ALL
-    ): List<FileModel> {
-        return getFileUseCase.getAllFiles(page, pageSize, fileType).flowOn(dispatcher).first()
     }
 
     /**
@@ -266,7 +270,7 @@ class FileManager private constructor(
     ): List<FileModel> {
         if (!context?.let { hasStoragePermission(it) }!!) {
             throw SecurityException(
-                "Storage permission not granted. Please request READ_EXTERNAL_STORAGE permission or" + "MANAGE_EXTERNAL_STORAGE permission for Android 11 and above."
+                "Storage permission not granted. Please request READ_EXTERNAL_STORAGE permission or " + "MANAGE_EXTERNAL_STORAGE permission for Android 11 and above."
             )
         }
         return if (usePagination) {
@@ -274,5 +278,11 @@ class FileManager private constructor(
         } else {
             getFileUseCase.getAllFiles(1, Int.MAX_VALUE, fileType).flowOn(dispatcher).first()
         }
+    }
+
+    private suspend fun getAllFiles(
+        page: Int = 1, pageSize: Int = defaultPageSize, fileType: FileType = FileType.ALL
+    ): List<FileModel> {
+        return getFileUseCase.getAllFiles(page, pageSize, fileType).flowOn(dispatcher).first()
     }
 }
