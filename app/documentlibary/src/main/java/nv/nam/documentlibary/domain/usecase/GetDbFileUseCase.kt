@@ -13,11 +13,16 @@ import nv.nam.documentlibary.domain.models.FileModel
 class GetDbFileUseCase(
     private val fileDbRepository: FileDbRepositoryImpl
 ) {
-    suspend fun getFavoriteFiles() = fileDbRepository.getFavoriteFiles()
+    fun getFavoriteFiles() = fileDbRepository.getFavoriteFiles()
 
-    suspend fun getRecentFiles(limit: Int) = fileDbRepository.getRecentFiles(limit)
+    fun getRecentFiles(limit: Int) = fileDbRepository.getRecentFiles(limit)
 
     suspend fun addFileToFavorites(fileModel: FileModel) =
         fileDbRepository.addFileToFavorites(fileModel)
+
+    suspend fun updateLastAccessedDate(fileModel: FileModel) {
+        fileDbRepository.updateLastAccessedDate(fileModel)
+
+    }
 
 }

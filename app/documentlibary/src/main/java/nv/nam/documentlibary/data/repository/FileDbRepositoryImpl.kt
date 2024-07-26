@@ -33,4 +33,8 @@ class FileDbRepositoryImpl
             emit(files.toFileModel())
         }
     }
+
+    override suspend fun updateLastAccessedDate(fileModel: FileModel) {
+        fileDao.updateLastAccessedDate(fileModel.path)
+    }
 }

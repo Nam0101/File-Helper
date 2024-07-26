@@ -48,6 +48,7 @@ fun FileEntity.toFileModel(): FileModel {
         name = this.name,
         isDirectory = this.isDirectory,
         size = this.size,
+        isFavorite = this.isFavorite,
         lastModifiedDate = this.lastModifiedDate,
     )
 }

@@ -49,15 +49,21 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    //mockito
+    testImplementation(libs.mockito.core)
     // coroutine
-//    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.android)
 //    //flow
-//    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 //
 //    // google auth
 //    implementation(libs.play.services.auth)
 //    //room
-//    implementation(libs.androidx.room.runtime)
-//    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    // koin
+    implementation(libs.koin.android)
 
 }

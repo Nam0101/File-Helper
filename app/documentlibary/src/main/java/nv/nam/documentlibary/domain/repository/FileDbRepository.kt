@@ -14,4 +14,5 @@ interface FileDbRepository {
     fun getFavoriteFiles(): Flow<List<FileModel>>
     suspend fun addFileToFavorites(file: FileModel)
     fun getRecentFiles(limit: Int): Flow<List<FileModel>>
+    suspend fun updateLastAccessedDate(fileModel: FileModel)
 }

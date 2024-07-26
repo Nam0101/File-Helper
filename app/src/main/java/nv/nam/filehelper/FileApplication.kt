@@ -1,6 +1,11 @@
 package nv.nam.filehelper
 
 import android.app.Application
+import nv.nam.documentlibary.FileManager
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.context.GlobalContext.startKoin
+import org.koin.dsl.module
 
 /**
  * @author Nam Nguyen Van
@@ -10,4 +15,23 @@ import android.app.Application
  * @description : File Application
  */
 class FileApplication : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        startKoin {
+            androidContext(this@FileApplication)
+            modules(appModule)
+        }
+    }
+}
+
+val appModule = module {
+    viewModel<MainViewModel> { MainViewModel(get()) }
+
+    single<FileManager> {
+        FileManager.Builder().useLocalFileStorage().useContext(
+            context = get(),
+        ).setNotPageSize().build()
+    }
+
 }

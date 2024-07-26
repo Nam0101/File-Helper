@@ -11,18 +11,21 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 
 class MainActivity : AppCompatActivity() {
     private val btn: Button by lazy { findViewById(R.id.button) }
     private val authBtn by lazy { findViewById<Button>(R.id.auth) }
-    private val viewModel: MainViewModel by viewModels()
+
+    //inject by koin
+    private val mainViewModel: MainViewModel by viewModel<MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -76,10 +79,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchFiles() {
-        viewModel.getAllFiles(0, 10)
-        viewModel.files.observe(this) {
-            //size
-            Log.i("Files", it.size.toString())
+        mainViewModel.getAllFiles(0, 10)
+        mainViewModel.files.observe(this) { file ->
+            file.forEach {
+                Log.i("File", it.name)
+            }
         }
     }
 }

@@ -1,6 +1,11 @@
 package nv.nam.documentlibary
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Environment
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
@@ -29,6 +34,7 @@ import nv.nam.documentlibary.domain.usecase.GetFileUseCase
 class FileManager private constructor(
     private val getFileUseCase: GetFileUseCase,
     private val getDbFileUseCase: GetDbFileUseCase?,
+    private val context: Context?,
     private val defaultPageSize: Int = 20,
 ) {
     /**
@@ -38,10 +44,11 @@ class FileManager private constructor(
      * @property defaultPageSize The default number of files to fetch in a single page.
      */
     private constructor(
-        getFileUseCase: GetFileUseCase, defaultPageSize: Int
-    ) : this(getFileUseCase, null, defaultPageSize)
+        getFileUseCase: GetFileUseCase, context: Context, defaultPageSize: Int
+    ) : this(getFileUseCase, null, context, defaultPageSize)
 
     private val dispatcher = Dispatchers.IO
+
 
     /**
      * Builder class for [FileManager]. Allows for configuring file source and page size.
@@ -50,7 +57,7 @@ class FileManager private constructor(
         private var fileSource: FileSource? = null
         private var defaultPageSize: Int = 20
 
-        private var fileDatabase: FileDatabase? = null
+        private var context: Context? = null
 
         /**
          * Configures the FileManager to use local file storage.
@@ -90,10 +97,10 @@ class FileManager private constructor(
             return this
         }
 
-        fun useDatabase(
+        fun useContext(
             context: Context
         ): Builder {
-            this.fileDatabase = FileDatabase.getDatabase(context)
+            this.context = context
             return this
         }
 
@@ -106,17 +113,18 @@ class FileManager private constructor(
             val fileSource = requireNotNull(fileSource) { "FileSource must be set" }
             val fileRepository = FileRepositoryImpl(fileSource)
             val getFileUseCase = GetFileUseCase(fileRepository)
-            return if (fileDatabase != null) {
-                val dbFileRepository = FileDbRepositoryImpl(fileDatabase!!.fileDao())
+            return if (context != null) {
+                val fileDatabase = FileDatabase.getDatabase(context!!)
+                val dbFileRepository = FileDbRepositoryImpl(fileDatabase.fileDao())
                 val getDbFileUseCase = GetDbFileUseCase(dbFileRepository)
-                FileManager(getFileUseCase, getDbFileUseCase, defaultPageSize)
+                FileManager(getFileUseCase, getDbFileUseCase, context!!, defaultPageSize)
             } else {
-                FileManager(getFileUseCase, defaultPageSize)
+                throw SecurityException("Context must be set to use this class")
             }
         }
     }
 
-    suspend fun getAllFiles(
+    private suspend fun getAllFiles(
         page: Int = 1, pageSize: Int = defaultPageSize, fileType: FileType = FileType.ALL
     ): List<FileModel> {
         return getFileUseCase.getAllFiles(page, pageSize, fileType).flowOn(dispatcher).first()
@@ -208,6 +216,47 @@ class FileManager private constructor(
         return getFileUseCase.searchFileByName(fileName).flowOn(dispatcher).first()
     }
 
+    /**
+     * Fetches the favorite files.
+     *
+     * @return The list of favorite files.
+     */
+    suspend fun getFavoriteFiles() =
+        getDbFileUseCase?.getFavoriteFiles()?.flowOn(dispatcher)?.first()
+
+    /**
+     * Fetches the recent files.
+     * @param limit The maximum number of recent files to fetch.
+     * @return The list of recent files.
+     */
+    suspend fun getRecentFiles(limit: Int = 10) =
+        getDbFileUseCase?.getRecentFiles(limit)?.flowOn(dispatcher)?.first()
+
+    /**
+     * Updates the last accessed date of a file.
+     * @param fileModel The file to update.
+     */
+    suspend fun updateLastAccessedDate(fileModel: FileModel) {
+        getDbFileUseCase?.updateLastAccessedDate(fileModel)
+    }
+
+    /**
+     * Sets a file as a favorite.
+     * @param fileModel The file to set as a favorite.
+     */
+    suspend fun setFavoriteFile(fileModel: FileModel) {
+        getDbFileUseCase?.addFileToFavorites(fileModel)
+    }
+
+    private fun hasStoragePermission(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Environment.isExternalStorageManager()
+        } else {
+            ContextCompat.checkSelfPermission(
+                context, Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+    }
 
     private suspend fun getAllFiles(
         page: Int = 1,
@@ -215,6 +264,11 @@ class FileManager private constructor(
         usePagination: Boolean = true,
         fileType: FileType = FileType.ALL
     ): List<FileModel> {
+        if (!context?.let { hasStoragePermission(it) }!!) {
+            throw SecurityException(
+                "Storage permission not granted. Please request READ_EXTERNAL_STORAGE permission or" + "MANAGE_EXTERNAL_STORAGE permission for Android 11 and above."
+            )
+        }
         return if (usePagination) {
             getFileUseCase.getAllFiles(page, pageSize, fileType).flowOn(dispatcher).first()
         } else {

@@ -36,4 +36,7 @@ interface FileDao {
 
     @Query("UPDATE files SET is_favorite = 1 WHERE  path = :path")
     fun addFileToFavorites(path: String)
+
+    @Query("UPDATE files SET last_accessed_date = CURRENT_TIMESTAMP WHERE path = :path")
+    fun updateLastAccessedDate(path: String)
 }
