@@ -1,83 +1,106 @@
-## FileHelper SDK - README
+```markdown
+# FileHelper SDK - README
 
-### Introduction
+## Introduction
 
-FileHelper SDK provides a simple and efficient way to manage and access files on Android devices. The SDK supports:
+The FileHelper SDK provides a simple and efficient way to manage and access files on Android devices. 
+
+## Features
 
 - Fetching a list of all files.
 - Filtering files by type (image, video, audio, document, etc.).
 - Filtering files by extension.
 - Searching for files by name.
+- Pagination support for handling large file lists.
+- Integration with Room Database for persistent file management (optional).
 
-### Installation
+## Installation
 
-1. Add the SDK to your project (e.g., by adding a dependency in your `build.gradle`).
+1. **Add the SDK dependency:**
 
-2. Initialize `FileManager` with your application's `Context`:
+   - Add the following line to your module's `build.gradle.kts` (or `build.gradle`) file:
+
+     ```gradle
+     implementation("nv.nam:filehelper:1.0.0") // Replace with the actual artifact details
+     ```
+
+   - Replace `1.0.0` with the latest version of the FileHelper SDK.
+
+2. **Sync Project:**
+
+   - Sync your project with Gradle files. 
+
+## Basic Usage
+
+1. **Initialize `FileManager`:**
 
    ```kotlin
    val fileManager = FileManager.Builder()
        .useLocalFileStorage() // Use local storage
-       .setDefaultPageSize(50) // Optional: Set the maximum number of files per page
+       .setDefaultPageSize(50) // Optional: Set max files per page 
        .build()
    ```
 
-### Usage
+2. **Access Files:**
 
-**Get a list of all files:**
+   ```kotlin
+   // Get all files
+   val allFiles = fileManager.getAllFiles()
 
-```kotlin
-val allFiles = fileManager.getAllFiles()
+   // Filter by type
+   val imageFiles = fileManager.getAllImageFiles() 
+
+   // Filter by extension
+   val pdfFiles = fileManager.getFileByExtension("pdf")
+
+   // Search by name
+   val results = fileManager.searchFileByName("report.pdf") 
+
+   // Pagination
+   val firstPage = fileManager.getAllFiles(page = 1, pageSize = 20) 
+   ```
+
+## Room Database Integration (Optional)
+
+For persistent storage and more advanced file management, you can integrate FileHelper with Room Database.
+
+1. **Add Room Dependency:**
+
+   ```gradle
+   implementation("androidx.room:room-runtime:2.5.2") // Replace with the latest version
+   implementation("androidx.room:room-ktx:2.5.2") 
+   kapt("androidx.room:room-compiler:2.5.2") 
+   ```
+
+2. **Initialize Database:**
+
+   ```kotlin
+   val db = Room.databaseBuilder(context, FileDatabase::class.java, "file_database").build()
+   ```
+
+3. **Provide Database to FileManager:**
+
+   ```kotlin
+   val fileManager = FileManager.Builder()
+       .useLocalFileStorage() 
+       .useDatabase(context) // Provide your initialized Room database 
+       .build()
+   ```
+
+## Notes
+
+- The FileHelper SDK uses Kotlin Coroutines for asynchronous operations. Make sure you have added the necessary coroutines dependencies to your project.
+- The `FileModel` class represents file information and provides properties like `name`, `path`, `size`, and more.
+
+## Examples
+
+You can find example projects and more detailed usage instructions in the [examples](/examples) directory.
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more information.
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 ```
-
-**Filter files by type:**
-
-```kotlin
-val imageFiles = fileManager.getAllImageFiles()
-val videoFiles = fileManager.getAllVideoFiles()
-val audioFiles = fileManager.getAllAudioFiles()
-// ... and other file types
-```
-
-**Filter files by extension:**
-
-```kotlin
-val pdfFiles = fileManager.getFileByExtension("pdf")
-val txtFiles = fileManager.getFileByExtension("txt")
-// ... and other extensions
-```
-
-**Search for files by name:**
-
-```kotlin
-val searchResults = fileManager.searchFileByName("file name to search")
-```
-
-**Pagination:**
-
-You can use the `page` and `pageSize` parameters to paginate the returned results:
-
-```kotlin
-val firstPage = fileManager.getAllFiles(page = 1, pageSize = 20)
-val secondPage = fileManager.getAllFiles(page = 2, pageSize = 20)
-```
-
-**Using Room Database:**
-
-If you want to use the SDK's database features (like `GetDbFileUseCase`), you need to initialize the database and provide it to the `FileManager`:
-
-```kotlin
-val db = Room.databaseBuilder(context, FileDatabase::class.java, "file_database").build()
-val fileManager = FileManager.Builder()
-    .useLocalFileStorage() 
-    .useDatabase(context) // Initialize database
-    .build()
-```
-
-### Notes
-
-- The SDK uses coroutines. Make sure you have added coroutines dependencies to your project.
-- `FileManager` methods return a `List<FileModel>`, where `FileModel` contains information about the file such as name, path, size, etc.
-- The SDK currently only supports accessing files on local storage. Support for accessing files from remote sources (e.g., Google Drive) will be added in the future.
-
-This README provides a basic understanding of the SDK's capabilities. Feel free to explore the provided code and experiment with different functionalities. If you encounter any issues or have further questions, don't hesitate to reach out for support. 

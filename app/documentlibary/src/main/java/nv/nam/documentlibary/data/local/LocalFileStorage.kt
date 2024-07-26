@@ -1,5 +1,6 @@
 package nv.nam.documentlibary.data.local
 
+import android.util.Log
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -79,6 +80,7 @@ class LocalFileStorage : FileSource {
     private fun getFilesFromInternalStorage(
         directoryPath: String = localStorageDirectory, fileType: FileType = FileType.ALL
     ): List<FileModel> = sequence {
+        Log.i(TAG, "Fetching files from $directoryPath")
         val directory = File(directoryPath)
         if (directory.exists() && directory.isDirectory) {
             directory.listFiles()?.forEach { file ->

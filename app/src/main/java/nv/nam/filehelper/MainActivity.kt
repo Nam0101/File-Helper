@@ -76,7 +76,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchFiles() {
-        viewModel.getAllFiles(0, 20)
-
+        viewModel.getAllFiles(0, 10)
+        viewModel.files.observe(this) {
+            Log.i("Files", it.toString())
+        }
     }
 }

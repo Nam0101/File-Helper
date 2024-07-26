@@ -50,14 +50,14 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     // coroutine
-    implementation(libs.kotlinx.coroutines.android)
-    //flow
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-
-    // google auth
-    implementation(libs.play.services.auth)
-    //room
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.compiler)
+//    implementation(libs.kotlinx.coroutines.android)
+//    //flow
+//    implementation(libs.androidx.lifecycle.runtime.ktx)
+//
+//    // google auth
+//    implementation(libs.play.services.auth)
+//    //room
+//    implementation(libs.androidx.room.runtime)
+//    ksp(libs.androidx.room.compiler)
 
 }
