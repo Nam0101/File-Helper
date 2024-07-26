@@ -10,6 +10,7 @@ import android.os.Environment
 import android.provider.Settings
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -17,13 +18,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
+import com.bumptech.glide.Glide
 
 
 class MainActivity : AppCompatActivity() {
     private val btn: Button by lazy { findViewById(R.id.button) }
     private val authBtn by lazy { findViewById<Button>(R.id.auth) }
-
+    private val imv by lazy { findViewById<ImageView>(R.id.imageView) }
     //inject by koin
     private val mainViewModel: MainViewModel by viewModel<MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +44,10 @@ class MainActivity : AppCompatActivity() {
         btn.setOnClickListener{
             fetchFiles()
         }
+//        //glide
+//       Glide.with(this)
+//            .load("https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png")
+//            .into(imv)
     }
 
     private fun requestStoragePermission(

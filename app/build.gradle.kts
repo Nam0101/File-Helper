@@ -65,5 +65,6 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     // koin
     implementation(libs.koin.android)
+    implementation(libs.glide)
 
 }

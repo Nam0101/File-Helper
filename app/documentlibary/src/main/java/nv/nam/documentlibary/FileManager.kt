@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
+import android.util.Log
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
@@ -261,6 +263,10 @@ class FileManager private constructor(
             ) == PackageManager.PERMISSION_GRANTED
         }
     }
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e("FileManager", "An error occurred while accessing files:", throwable)
+    }
+
 
     private suspend fun getAllFiles(
         page: Int = 1,
@@ -269,20 +275,20 @@ class FileManager private constructor(
         fileType: FileType = FileType.ALL
     ): List<FileModel> {
         if (!context?.let { hasStoragePermission(it) }!!) {
-            throw SecurityException(
-                "Storage permission not granted. Please request READ_EXTERNAL_STORAGE permission or " + "MANAGE_EXTERNAL_STORAGE permission for Android 11 and above."
+            val message = "Storage permission not granted. Did you forget to request it? " +
+                    "Make sure to request the permission before calling this function."
+            Log.e(
+                "FileManager",
+                "Storage permission not granted.",
+                SecurityException(message)
             )
+            return emptyList()
         }
+
         return if (usePagination) {
             getFileUseCase.getAllFiles(page, pageSize, fileType).flowOn(dispatcher).first()
         } else {
             getFileUseCase.getAllFiles(1, Int.MAX_VALUE, fileType).flowOn(dispatcher).first()
         }
-    }
-
-    private suspend fun getAllFiles(
-        page: Int = 1, pageSize: Int = defaultPageSize, fileType: FileType = FileType.ALL
-    ): List<FileModel> {
-        return getFileUseCase.getAllFiles(page, pageSize, fileType).flowOn(dispatcher).first()
     }
 }
