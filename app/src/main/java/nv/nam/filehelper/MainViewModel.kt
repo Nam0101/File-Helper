@@ -16,16 +16,16 @@ import nv.nam.documentlibary.domain.models.FileModel
  */
 class MainViewModel : ViewModel() {
 
-    private val fileManager =
-        FileManager.Builder().useLocalFileStorage().build()
+    private val fileManager = FileManager.Builder().useLocalFileStorage().setNotPageSize().build()
 
     private val _files = MutableLiveData<List<FileModel>>()
     val files = _files
 
     fun getAllFiles(page: Int, pageSize: Int) {
         viewModelScope.launch {
-            val files = fileManager.getAllDocumentFiles(page, pageSize)
+            val files = fileManager.getAllDocumentFiles()
             _files.postValue(files)
         }
+
     }
 }

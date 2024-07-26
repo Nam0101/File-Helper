@@ -78,7 +78,8 @@ class MainActivity : AppCompatActivity() {
     private fun fetchFiles() {
         viewModel.getAllFiles(0, 10)
         viewModel.files.observe(this) {
-            Log.i("Files", it.toString())
+            //size
+            Log.i("Files", it.size.toString())
         }
     }
 }

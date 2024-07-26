@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.flowOn
 import nv.nam.documentlibary.data.FileSource
 import nv.nam.documentlibary.data.db.FileDatabase
 import nv.nam.documentlibary.data.local.LocalFileStorage
+import nv.nam.documentlibary.data.repository.FileDbRepositoryImpl
 import nv.nam.documentlibary.data.repository.FileRepositoryImpl
 import nv.nam.documentlibary.domain.models.FileModel
 import nv.nam.documentlibary.domain.models.FileType
@@ -68,6 +69,7 @@ class FileManager private constructor(
          * @return The Builder instance for chaining.
          */
         fun useRemoteFileStorage(): Builder {
+            // TODO: Implement remote file storage
             return this
         }
 
@@ -80,6 +82,11 @@ class FileManager private constructor(
 
         fun setDefaultPageSize(pageSize: Int): Builder {
             this.defaultPageSize = pageSize
+            return this
+        }
+
+        fun setNotPageSize(): Builder {
+            this.defaultPageSize = Int.MAX_VALUE
             return this
         }
 
@@ -99,8 +106,20 @@ class FileManager private constructor(
             val fileSource = requireNotNull(fileSource) { "FileSource must be set" }
             val fileRepository = FileRepositoryImpl(fileSource)
             val getFileUseCase = GetFileUseCase(fileRepository)
-            return FileManager(getFileUseCase, defaultPageSize)
+            return if (fileDatabase != null) {
+                val dbFileRepository = FileDbRepositoryImpl(fileDatabase!!.fileDao())
+                val getDbFileUseCase = GetDbFileUseCase(dbFileRepository)
+                FileManager(getFileUseCase, getDbFileUseCase, defaultPageSize)
+            } else {
+                FileManager(getFileUseCase, defaultPageSize)
+            }
         }
+    }
+
+    suspend fun getAllFiles(
+        page: Int = 1, pageSize: Int = defaultPageSize, fileType: FileType = FileType.ALL
+    ): List<FileModel> {
+        return getFileUseCase.getAllFiles(page, pageSize, fileType).flowOn(dispatcher).first()
     }
 
     /**
@@ -172,17 +191,13 @@ class FileManager private constructor(
      * @param usePagination Flag to enable/disable pagination.
      * @return The list of ZIP files.
      */
-    suspend fun getFileByExtension(
+    suspend fun getFilesByExtension(
         extension: String,
         page: Int = 1,
-        pageSize: Int = defaultPageSize,
-        usePagination: Boolean = true
-    ): List<FileModel> {
-        val files = getAllFiles(page, pageSize, usePagination, FileType.ALL)
-        val ext = if (extension.startsWith(".")) extension else ".$extension"
-        return files.filter { it.name.endsWith(ext, true) }
+        pageSize: Int = defaultPageSize
+    ): List<FileModel> = getAllFiles(page, pageSize).filter {
+        it.name.endsWith(".${extension}", ignoreCase = true)
     }
-
     /**
      * Searches for files by name.
      *
