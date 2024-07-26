@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "File Helper"
 include(":app")
- 
+include(":app:documentLib")
+include(":app:documentlibary")

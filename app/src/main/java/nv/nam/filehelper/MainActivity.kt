@@ -11,20 +11,18 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 
 class MainActivity : AppCompatActivity() {
     private val btn: Button by lazy { findViewById(R.id.button) }
     private val authBtn by lazy { findViewById<Button>(R.id.auth) }
-
+    private val viewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -78,14 +76,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchFiles() {
-        val fileManager = FileManager.Builder().useLocalFileStorage().setDefaultPageSize(50).build()
-        CoroutineScope(Dispatchers.Default).launch {
-            val file = fileManager.getAllPdfFiles(usePagination = false)
-            Log.i("File", "File size: ${file.size}")
-            val searchedFile = fileManager.searchFileByName("Bachelor-Hedspi-program")
-            searchedFile.forEach {
-                Log.i("File", "File name: ${it.name}")
-            }
-        }
+        viewModel.getAllFiles(0, 20)
+
     }
 }
