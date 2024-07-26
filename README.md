@@ -1,106 +1,95 @@
-```markdown
 # FileHelper SDK - README
 
 ## Introduction
 
-The FileHelper SDK provides a simple and efficient way to manage and access files on Android devices. 
+The FileHelper SDK provides a simple and efficient way to manage and access files on Android devices. It simplifies file operations such as fetching, filtering, searching, and pagination. The SDK also offers optional integration with Room Database for persistent file management.
 
-## Features
+## Key Features
 
-- Fetching a list of all files.
-- Filtering files by type (image, video, audio, document, etc.).
-- Filtering files by extension.
-- Searching for files by name.
-- Pagination support for handling large file lists.
-- Integration with Room Database for persistent file management (optional).
+- **File Listing:** Fetch a list of all files on the device.
+- **Filtering:**
+   - Filter files by type (image, video, audio, document, etc.).
+   - Filter files by file extension.
+- **Searching:** Search for files by name.
+- **Pagination:** Easily handle large file lists with pagination support.
+- **Room Database Integration (Optional):** Enables persistent storage of file-related data using Room Database.
 
 ## Installation
 
 1. **Add the SDK dependency:**
-
-   - Add the following line to your module's `build.gradle.kts` (or `build.gradle`) file:
+   - Add the following line to your module's `build.gradle.kts` (or `build.gradle`) file, replacing `1.0.0` with the latest SDK version:
 
      ```gradle
-     implementation("nv.nam:filehelper:1.0.0") // Replace with the actual artifact details
+     implementation("nv.nam:filehelper:1.0.0") 
      ```
 
-   - Replace `1.0.0` with the latest version of the FileHelper SDK.
+   - Sync your project with Gradle files.
 
-2. **Sync Project:**
+2. **(Optional) Add Room Database Dependency (if needed):**
+   - Add the following dependencies to your `build.gradle.kts` (or `build.gradle`) file:
 
-   - Sync your project with Gradle files. 
+     ```gradle
+     implementation("androidx.room:room-runtime:2.5.2") 
+     implementation("androidx.room:room-ktx:2.5.2") 
+     kapt("androidx.room:room-compiler:2.5.2") 
+     ```
+      - Replace version numbers with the latest versions if needed.
 
-## Basic Usage
+## Usage
 
-1. **Initialize `FileManager`:**
+### Initializing FileManager
 
-   ```kotlin
-   val fileManager = FileManager.Builder()
-       .useLocalFileStorage() // Use local storage
-       .setDefaultPageSize(50) // Optional: Set max files per page 
-       .build()
-   ```
+```kotlin
+val fileManager = FileManager.Builder()
+    .useLocalFileStorage() // Use local storage
+    .setDefaultPageSize(50) // Optional: Set max files per page 
+    .build()
+```
 
-2. **Access Files:**
+### Accessing Files
 
-   ```kotlin
-   // Get all files
-   val allFiles = fileManager.getAllFiles()
+```kotlin
+// Get all files
+val allFiles = fileManager.getAllFiles()
 
-   // Filter by type
-   val imageFiles = fileManager.getAllImageFiles() 
+// Filter by type (image, video, audio, etc.)
+val imageFiles = fileManager.getAllImageFiles() 
 
-   // Filter by extension
-   val pdfFiles = fileManager.getFileByExtension("pdf")
+// Filter by extension
+val pdfFiles = fileManager.getFileByExtension("pdf")
 
-   // Search by name
-   val results = fileManager.searchFileByName("report.pdf") 
+// Search by name
+val results = fileManager.searchFileByName("report.pdf") 
 
-   // Pagination
-   val firstPage = fileManager.getAllFiles(page = 1, pageSize = 20) 
-   ```
+// Pagination
+val firstPage = fileManager.getAllFiles(page = 1, pageSize = 20) 
+```
 
-## Room Database Integration (Optional)
+### Room Database Integration (Optional)
 
-For persistent storage and more advanced file management, you can integrate FileHelper with Room Database.
-
-1. **Add Room Dependency:**
-
-   ```gradle
-   implementation("androidx.room:room-runtime:2.5.2") // Replace with the latest version
-   implementation("androidx.room:room-ktx:2.5.2") 
-   kapt("androidx.room:room-compiler:2.5.2") 
-   ```
-
-2. **Initialize Database:**
+1. **Initialize Database:**
 
    ```kotlin
    val db = Room.databaseBuilder(context, FileDatabase::class.java, "file_database").build()
    ```
 
-3. **Provide Database to FileManager:**
+2. **Provide Database to FileManager:**
 
    ```kotlin
    val fileManager = FileManager.Builder()
        .useLocalFileStorage() 
-       .useDatabase(context) // Provide your initialized Room database 
+       .useDatabase(context) // Provide your Room database instance
        .build()
    ```
 
-## Notes
-
-- The FileHelper SDK uses Kotlin Coroutines for asynchronous operations. Make sure you have added the necessary coroutines dependencies to your project.
-- The `FileModel` class represents file information and provides properties like `name`, `path`, `size`, and more.
-
 ## Examples
 
-You can find example projects and more detailed usage instructions in the [examples](/examples) directory.
+Find example projects and detailed usage instructions in the [examples](/examples) directory.
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more information.
+Contribute to the project! See our [Contributing Guidelines](CONTRIBUTING.md).
 
 ## License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
-```
