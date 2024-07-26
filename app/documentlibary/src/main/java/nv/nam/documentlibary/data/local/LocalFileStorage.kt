@@ -28,6 +28,7 @@ class LocalFileStorage : FileSource {
     private var cachedFiles: List<FileModel>? = null
     private var updateJob: Job? = null
     private val contextDispatcher: CoroutineContext = Dispatchers.IO + Job()
+    private var shouldUpdateCache = true
 
     /**
      * Fetches all files from the local storage based on the provided page, page size, and file type.
@@ -41,18 +42,19 @@ class LocalFileStorage : FileSource {
     override suspend fun getAllFiles(
         page: Int, pageSize: Int, fileType: FileType
     ): Flow<List<FileModel>> = flow {
-        cachedFiles?.let {
-            emit(it.chunked(pageSize).getOrNull(page - 1) ?: emptyList())
-        }
-
         if (updateJob?.isActive == true) {
             updateJob?.join()
         }
-        updateJob = Job()
-        withContext(contextDispatcher) {
-            cachedFiles = getFilesFromInternalStorage(fileType = fileType)
+
+        if (cachedFiles == null || shouldUpdateCache) {
+            updateJob = Job()
+            withContext(contextDispatcher) {
+                cachedFiles = getFilesFromInternalStorage(fileType = fileType)
+            }
+            (updateJob as CompletableJob).complete()
+            shouldUpdateCache = false
         }
-        (updateJob as CompletableJob).complete()
+
         emit(cachedFiles?.chunked(pageSize)?.getOrNull(page - 1) ?: emptyList())
     }
 
