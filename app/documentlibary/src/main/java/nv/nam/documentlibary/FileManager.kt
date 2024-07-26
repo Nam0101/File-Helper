@@ -276,7 +276,7 @@ class FileManager private constructor(
     ): List<FileModel> {
         if (!context?.let { hasStoragePermission(it) }!!) {
             val message = "Storage permission not granted. Did you forget to request it? " +
-                    "Make sure to request the permission before calling this function."
+                    "Make sure to request the permission before calling any functions in FileManager."
             Log.e(
                 "FileManager",
                 "Storage permission not granted.",
